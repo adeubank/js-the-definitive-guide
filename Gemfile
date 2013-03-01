@@ -7,11 +7,8 @@ group :production do
 end
 
 group :development do
-gem 'sqlite3'
-  case RUBY_PLATFORM
-  when /linux/
-    gem 'unicorn-rails'
-  end
+  gem 'sqlite3'
+  gem 'unicorn-rails'
 end
 
 group :assets do
