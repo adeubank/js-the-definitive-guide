@@ -6,12 +6,12 @@ group :production do
   gem 'pg'
 end
 
-group :development, :test do
+group :development do
+gem 'sqlite3'
   case RUBY_PLATFORM
   when /linux/
     gem 'unicorn-rails'
   end
-  gem 'sqlite3'
 end
 
 group :assets do
