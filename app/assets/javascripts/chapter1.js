@@ -85,9 +85,9 @@ x >= y                      // => false: greater-than or equal
 false == (x > y)            // => true: false is equal to false
 
 // Logical operators combine or invert boolean values
-console.log((x == 2) && (y == 3))        // => true: both comparisons are true. && is AND
-console.log((x > 3) || (y < 3))          // => false: neither comparison is true. || is OR
-console.log(!(x == y))                   // => true: ! inverts a boolean value
+var a = (x == 2) && (y == 3)        // => true: both comparisons are true. && is AND
+var b = (x > 3) || (y < 3)          // => false: neither comparison is true. || is OR
+var c = !(x == y)                   // => true: ! inverts a boolean value
 
 // Functions are parameterized blocks of JavaScript code that we can invoke.
 function plus1(x) {         // Define a function named "plus1" with parameter x
