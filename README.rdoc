@@ -1,5 +1,5 @@
 == JavaScript: The Definitive Guide
 
-This is me learning JavaScript from David Flanagans book.
+This is me learning JavaScript from David Flanagan's book.
 
 Check out the app at http://allens-js-app.herokuapp.com/
