@@ -260,3 +260,33 @@ Object.defineProperty(Object.prototype,
       }
     }
   });
+
+/* 6.8 Object Attributes */
+function classof(o) {
+  if (o === null) return "Null";
+  if (o === undefined) return "Undefined";
+  return Object.prototype.toString.call(o).slice(8,-1);
+}
+
+classof(null)         // => "Null"
+classof(1)            // => "Number"
+classof("")           // => "String"
+classof(false)        // => "Boolean"
+classof({})           // => "Object"
+classof([])           // => "Array"
+classof(/./)          // => "Regexp"
+classof(new Date())   // => "Date"
+classof(window)       // => "Window" (a client-side host object)
+function f() {};      // => Define a custom constructor
+classof(new f());     // => "Object"
+
+// Create a sealed object with a frozen prototype and a nonenumerable property
+var o = Object.seal(Object.create(Object.freeze({x:1}), 
+                                  {y: {value:2, writable: true}}));
+
+/* 6.9 Serializing Objects */
+o = {x:1, y:{z:[false,null,""]}};  // Define a test object
+s = JSON.stringify(o);             // s is '{"x":1, "y":{"z":[false, null, ""]}}'
+p = JSON.parse(s);                 // p is a deep copy of o
+
+
