@@ -61,10 +61,11 @@ a.length = 3;           // a is now [1,2,3].
 a.length = 0;           // Delete all elements. a is [].
 a.length = 5;           // Length is 5, but no elements, like new Array(5)
 
-a = [1,2,3];                               // Start with a 3-element array.
-Object.defineProperty(a, "length",         // Make the length property
-                      {writable: false});  // readonly
-a.length = 0;                              // a is unchanged.
+// Not implemented in Firefox 19.02
+//a = [1,2,3];                               // Start with a 3-element array.
+//Object.defineProperty(a, "length",         // Make the length property
+                      //{writable: false});  // readonly
+//a.length = 0;                              // a is unchanged.
 
 /* 7.5 Adding and Deleting Array Elements */
 a = [];                 // Start with an empty array.
@@ -81,3 +82,68 @@ delete a[1];        // a now has no element at index 1
 a.length;           // => 3: delete does not affect array length
 
 /* 7.6 Iterating Arrays */
+var keys = Object.keys(o);    // Get an array of property names for object o
+var values = [];              // Store matching property values in this array
+for(var i = 0; i < keys.length; i++) {  // For each index in the array
+  var key = keys[i];                    // Get the key at that index
+  values[i] = o[key];                   // Store the value in the values array
+}
+
+// Lookup length once
+for(var i = 0, len = keys.length; i < len; i++) {
+  // loop body remains the same
+}
+
+// skip or exclude null, undefined and non existent elements
+for(var i = 0; i < a.length; i++) {
+  if (!a[i]) continue;  // Skip null, undefined, and nonexistent elements
+  // loop body here
+}
+
+for(var i = 0; i < a.length; i++) {
+  if (a[i] === undefined) continue; // Skip undefined + nonexistent elements
+  // loop body here
+}
+
+for(var i = 0; i < a.length; i++) {
+  if (!(i in a)) continue; // Skip nonexistent elements
+  // loop body here
+}
+
+var sparseArray = [];
+for(var index in sparseArray) {
+  var value = sparseArray[index];
+  // Now do something with index and value
+}
+
+for(var i in a) {
+  if (!a.hasOwnProperty(i)) continue; // Skip inherited properties
+  // loop body here
+}
+
+for(var i in a) {
+  // Skip i if it is not a non-negative integer
+  if (String(Math.floor(Math.abs(Number(i)))) !== i) continue;
+}
+
+var data = [1,2,3,4,5]      // This is the array we want to iterate
+var sumOfSquares = 0;       // We want to compute the sum of the squares of data
+data.forEach(function(x) {  // Pass each element of data to this function
+                sumOfSquares += x*x;  // add up the squares
+            });
+
+/* 7.7 Multidimensional Arrays */
+// Create a multidimensional array
+var table = new Array(10);              // 10 rows of the table
+for(var i = 0; i < table.length; i++)
+  table[i] = new Array(10);             // Each row has 10 columns
+  
+// Initialize the array
+for(var row = 0; row < table.length; row++) {
+  for(col = 0; col < table[row].length; col++) {
+    table[row][col] = row*col;
+  }
+}
+
+// Use the multidimensional array to compute 5*7
+var product = table[5][7];  // 35
