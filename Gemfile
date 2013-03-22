@@ -9,6 +9,7 @@ end
 group :development do
   gem 'sqlite3'
   gem 'quiet_assets'
+  gem 'rails-dev-tweaks'
 end
 
 group :assets do
