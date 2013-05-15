@@ -27,7 +27,7 @@ var a = new Array(5, 4, 3, 2, 1, "testing, testing");
 var a = ["world"];      // Start with a one-element array
 var value = a[0];       // Read element 0
 a[1] = 3.14;            // Write element 1
-i = 2;                  
+i = 2;
 a[i] = 3;               // Write element 2
 a[i + 1] = "hello";     // Write element 3
 a[a[i]] = a[0];         // Read elements 0 and 2, write element 3
@@ -137,7 +137,7 @@ data.forEach(function(x) {  // Pass each element of data to this function
 var table = new Array(10);              // 10 rows of the table
 for(var i = 0; i < table.length; i++)
   table[i] = new Array(10);             // Each row has 10 columns
-  
+
 // Initialize the array
 for(var row = 0; row < table.length; row++) {
   for(col = 0; col < table[row].length; col++) {
@@ -147,3 +147,44 @@ for(var row = 0; row < table.length; row++) {
 
 // Use the multidimensional array to compute 5*7
 var product = table[5][7];  // 35
+
+/* 7.8 Array Methods */
+
+/* 7.8.1 join() */
+var a = [1,2,3];       // Create a new array with these three elements
+a.join();              // => "1,2,3"
+a.join(" ");           // => "1 2 3"
+a.join("");            // => "123"
+var b = new Array(10); // An array of length 10 with no elements
+b.join('-');           // => '---------': a string of 9 hypens
+
+/* 7.8.2 reverse() */
+a.reverse().join();    // => "3,2,1" and a is now [3,2,1]
+
+/* 7.8.3 sort() */
+var a = new Array("banana", "cherry", "apple");
+a.sort();
+var s = a.join(", ");  // s == "apple, banana, cherry"
+
+var a = [33, 4, 1111, 222];
+a.sort();                   // Alphabetical order: 1111, 222, 33, 4
+a.sort(function(a,b) {      // Numerical order: 4, 33, 222, 1111
+         return a-b;        // Returns < 0, 0 , > 0, depending on the order
+       });
+a.sort(function(b,a) {return b-a}); // Reverse numerical order
+
+a = ['ant', 'Bug', 'cat', 'Dog'];
+a.sort();                 // case-sensitive sort: ['Bug', 'Dog', 'ant', 'cat']
+a.sort(function(s,t){     // Case-insensitive sort
+         var a = s.toLowerCase();
+         var b = t.toLowerCase();
+         if (a < b) return -1;
+         if (a > b) return 1;
+         return 0;
+       });                // => ['ant', 'Bug', 'cat', 'Dog']
+
+var a = [1,2,3];
+a.concat(4,5);            // => [1,2,3,4,5]
+a.concat([4,5]);          // => [1,2,3,4,5]
+a.concat([4,5], [6,7]);   // => [1,2,3,4,5,6,7]
+a.concat(4, [5, [6,7]])   // => [1,2,3,4,5[6,7]]
