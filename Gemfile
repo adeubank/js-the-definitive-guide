@@ -10,6 +10,7 @@ group :development do
   gem 'sqlite3'
   gem 'quiet_assets'
   gem 'rails-dev-tweaks'
+  gem 'webrick', '1.3.1'
 end
 
 group :assets do
