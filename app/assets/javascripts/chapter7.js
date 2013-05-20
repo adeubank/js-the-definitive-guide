@@ -149,7 +149,6 @@ for(var row = 0; row < table.length; row++) {
 var product = table[5][7];  // 35
 
 /* 7.8 Array Methods */
-<<<<<<< HEAD
 
 /* 7.8.1 join() */
 var a = [1,2,3];       // Create a new array with these three elements
@@ -166,26 +165,10 @@ a.reverse().join();    // => "3,2,1" and a is now [3,2,1]
 var a = new Array("banana", "cherry", "apple");
 a.sort();
 var s = a.join(", ");  // s == "apple, banana, cherry"
-=======
-var a = [1, 2, 3];        // Create a new array with these three elements
-a.join();                 // => "1,2,3"
-a.join(" ");              // => "1 2 3"
-a.join("");               // => "123"
-var b = new Array(10);    // An array of length 10 with no elements
-b.join("-");              // => '---------': a string of 9 hypens
-
-var a = [1, 2, 3];
-a.reverse().join();       // => "3,2,1" and a is now [3, 2, 1];
-
-var a = new Array("banana", "cherry", "apple");
-a.sort();
-var s = a.join(", ");   // s == "apple, banana, cherry"
->>>>>>> 20f5065f962ff85f4eac022cbb54994dc1d40c8f
 
 var a = [33, 4, 1111, 222];
 a.sort();                   // Alphabetical order: 1111, 222, 33, 4
 a.sort(function(a,b) {      // Numerical order: 4, 33, 222, 1111
-<<<<<<< HEAD
          return a-b;        // Returns < 0, 0 , > 0, depending on the order
        });
 a.sort(function(b,a) {return b-a}); // Reverse numerical order
@@ -193,20 +176,11 @@ a.sort(function(b,a) {return b-a}); // Reverse numerical order
 a = ['ant', 'Bug', 'cat', 'Dog'];
 a.sort();                 // case-sensitive sort: ['Bug', 'Dog', 'ant', 'cat']
 a.sort(function(s,t){     // Case-insensitive sort
-=======
-         return a-b;        // Returns < 0, 0, or > 0, depending on order
-       });
-a.sort(function(a,b) {return b-a;});    // Reverse numerical order
-a = ['ant', 'Bug', 'cat', 'Dog'];
-a.sort();                // case-sensitive sort: ['Bug', 'Dog', 'ant', 'cat']
-a.sort(function(s,t) {   // case-insensitve sort
->>>>>>> 20f5065f962ff85f4eac022cbb54994dc1d40c8f
          var a = s.toLowerCase();
          var b = t.toLowerCase();
          if (a < b) return -1;
          if (a > b) return 1;
          return 0;
-<<<<<<< HEAD
        });                // => ['ant', 'Bug', 'cat', 'Dog']
 
 /* 7.8.4 concat() */
@@ -245,7 +219,4 @@ stack.pop();            // stack: []
 /* 7.8.8 unshift() and shift() */
 var = [];               // a:[]
 a.unshift(1);           // a:[1]            Returns 1
-a.unshift(22);          // a:
-=======
-       });               // => ['ant', 'Bug', 'cat', 'Dog']
->>>>>>> 20f5065f962ff85f4eac022cbb54994dc1d40c8f
+a.unshift(22);          // a
