@@ -217,6 +217,56 @@ stack.pop();            // stack: [1]       Returns [4,5]
 stack.pop();            // stack: []
 
 /* 7.8.8 unshift() and shift() */
-var = [];               // a:[]
+var a = [];             // a:[]
 a.unshift(1);           // a:[1]            Returns 1
-a.unshift(22);          // a
+a.unshift(22);          // a:[22,1]         Returns: 22
+a.shift();              // a:[1]            Returns: 22
+a.unshift(3,[4,5]);     // a:[3,[4,5],1]    Returns: 3
+a.shift();              // a:[[4,5], 1]     Returns: 3
+a.shift();              // a:[1]            Returns: [4,5]
+a.shift();              // a:[]             returns: 1
+
+/* 7.8.9 toString() and toLocaleString() */
+([1,2,3].toString());         // Yields '1,2,3'
+(["a", "b", "c"].toString()); // Yields 'a,b,c'
+([1, [2,'c']].toString());    // Yields '1,2,c'
+
+/* 7.9.1 forEach() */
+var data = [1,2,3,4,5];                               // An array to sum
+// Compute the sum of array elements
+var sum = 0;                                          // Start at 0
+data.forEach(function(value) { sum += value; });      // Add each value to sum
+(sum)                                                 // => 15
+
+// Now increment each array element
+data.forEach(function(v,i,a) { a[i] = v + 1; });
+(data)                                                // => [2,3,4,5,6]
+
+function foreach(a,f,t) {
+  try { a.forEach(f,t); }
+  catch(e) {
+    if (e === foreach.break) return;
+    else throw e;
+  }
+}
+foreach.break = new Error("StopIteration");
+
+/* 7.9.2 map() */
+a = [1,2,3];
+b = a.map(function(x) { return x*x; });  // b is [1,4,9]
+
+/* 7.9.3 filter() */
+a = [5,4,3,2,1];
+smallValues = a.filter(function(x) { return x < 3 });       // => [2,1]
+everyOther = a.filter(function(x,i) { return i%2 == 0 });   // => [5,3,1]
+var sparse = [1,,2,,3];
+var dense = sparse.filter(function(x) { return true });     // => [1,2,3]
+
+// Remove undefined, null, and close gaps
+var arr = [undefined, null, , 1];
+arr = arr.filter(function(x) { return x !== undefined && x != null });
+
+/* 7.9.4 every() and some() */
+a = [1,2,3,4,5];
+a.every(function(x) { return x < 10; });        // => true: all values < 10
+a.every(function(x) { return x % 2 === 0; });   // => false: not all values even
