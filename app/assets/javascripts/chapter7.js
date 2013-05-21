@@ -270,3 +270,27 @@ arr = arr.filter(function(x) { return x !== undefined && x != null });
 a = [1,2,3,4,5];
 a.every(function(x) { return x < 10; });        // => true: all values < 10
 a.every(function(x) { return x % 2 === 0; });   // => false: not all values even
+
+a.some(function(x) { return x%2===0; });     // => true a has some even numbers
+a.some(isNaN)                                // => false: a has no non-numbers
+
+/* 7.9.5 reduce(), reduceRight() */
+var a = [1,2,3,4,5]
+var sum = a.reduce(function(x,y) { return x+y }, 0);      // Sum of values
+var product = a.reduce(function(x,y) { return x*y }, 1);  // Product of values
+var max = a.reduce(function(x,y) { return (x>y)?x:y; });  // Largest value
+var a = [2,3,4];
+// Compute 2^(3^4). Exponentation has right-to-left precedence
+var big = a.reduceRight(function(accumulator,value) {
+                          return Math.pow(value, accumulator);
+                        });
+var objects = [{x:1}, {y:2}, {z:3}];
+var merged = objects.reduce(union);     // => {x:1, y:2, z:3}
+var objects = [{x:1, a:1}, {y:2,a:2}, {z:3, a:3}];
+var leftUnion = objects.reduce(union);          // {x:1, y:2, z:3, a:3}
+var rightUnion = objects.reduceRight(union);    // {x:1, y:2, z:3, a:1}
+
+/* 7.9.6 indexOf() and lastIndexOf() */
+a = [0,1,2,1,0];
+a.indexOf(1);           // => 1: a[1] is 1
+
