@@ -313,4 +313,15 @@ function findall(a, x) {
 }
 
 /* 7.10 Array type */
+(Array.isArray([]));          // => true
+(Array.isArray({}));          // => false
 
+([] instanceof Array);       // => true
+({} instanceof Array);       // => false
+
+var isArray = Function.isArray || function(o) {
+  return typeof o === "object" &&
+  Object.prototype.toString.call(o) === "[object Array]";
+};
+
+/* 7.11 Array-like Objects */
