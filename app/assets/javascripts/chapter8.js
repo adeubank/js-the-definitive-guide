@@ -453,3 +453,181 @@ funcs[5]()      // What does this return?
 /* 8.7 Function Properties, Methods, and Constructor
  * 8.7.1 The length Property
  */
+// This function uses arguments.callee, so it won't work in strict mode
+function check(args) {
+  var actual = args.length;            // The actual number of arguments
+  var expected = args.callee.length;   // The expected number of arguments
+  if (actual !== expected)             // Throw an exception if they differ
+    throw Error("Expected " + expected + " args; got " + actual);
+}
+
+function testCheck(x, y, z) {
+  check(arguments);     // Check that the actual # of args matches expected #.
+  return x + y + z;
+}
+
+/* 8.7.3 The call() and apply() Methods */
+var biggest = Math.max.apply(Math, /* array of numbers */ [1,2]);
+
+// Replace the method named m of the object o with a version that logs
+// messages before and after invoking the original method.
+function trace(o, m) {
+  var original = o[m];    // Remember the original method in the closure
+  o[m] = function() {     // Now define the new method
+    console.log(new Date(), "Entering:", m);     // Log message.
+    var result = original.apply(this, arguments); // Invoke original.
+    console.log(new Date(), "Exiting:", m);      // Log message
+    return result;                                // Return result
+  };
+}
+
+/* 8.7.4 The bind() Method */
+function testBind(y) { return this.x + y; }   // This function needs to be bound
+var o = { x : 1 };                            // An object we'll bind to
+var g = testBind.bind(o);                     // Calling g(x) invokes o.f(x)
+g(2);                                         // => 3
+
+// Return a function that invokes f as a method of o, passing all its arguments
+function bind(f, o) {
+  if (f.bind) return f.bind(o);         // Use the bind method, if there is one
+  else return function() {
+    return f.apply(o, arguments);
+  };
+}
+
+var sum = function(x, y) { return x + y; }      // Return the sum of 2 args
+// Create a new function like sum, but with the this value bound to null
+// and the 1st argument bound to 1. This new function expects just one arg.
+var succ = sum.bind(null, 1);
+succ(2);         // => 3: x is bound to 1, and we pass 2 for the y argument
+
+function curry(y,z) { return this.x + y + z; };   // Another function that adds
+var g = curry.bind({x:1}, 2);                     // Bind this and y
+g(3);       // => 6: this.x is bound to 1, y is bound to 2, and z is 3
+
+// Example 8-5. A Function.bind() method for ECMAScript 3
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function(o /*, args */) {
+    // Save the this and arguments values into variables so we can
+    // use them in the nested function below.
+    var self = this, boundArgs = arguments;
+
+    // The return value of the bind() method is a function
+    return function() {
+      // Build up an argument list, starting with any args passed
+      // to bind after the first one, and follow those with all args
+      // passed to this function.
+      var args = [], i;
+      for(i = 1; i < boundArgs.length; i++) args.push(boundArgs[i]);
+      for(i = 0; i < arguments.length; i++) args.push(arguments[i]);
+
+      // Now invoke self as a method of o, with those arguments
+      return self.apply(o, args);
+    };
+  };
+}
+
+/* 8.7.6 The Function() Constructor */
+var justInTimeCompilation = new Function("x", "y", "return x*y;");
+
+var scope = "global";
+function constructFunction() {
+  var scope = "local";
+  return new Function("return scope");  // Does not capture the local scope!
+}
+// This line returns "global" because the function returned by the
+// Function() constructor does not use the local scope
+constructFunction()();      // => "global"
+
+// Example 6-4
+function isFunction(x) { 
+  return Object.prototype.toString.call(x) === "[object Function]";
+}
+
+/* 8.8 Functional Programming
+ * 8.8.1 Processing Arrays with Functions 
+ */
+
+// Nonfunctional
+var data = [1,1,3,5,5];
+
+// The mean is the sum of the elements divided by the number of elements
+var total = 0;
+for(var i = 0; i < data.length; i++) total += data[i];
+var mean = total/data.length;           // The mean of our data is 3
+
+// To compute the standard deviation, we first sum the squares of
+// the deviation of each element from the mean
+total = 0;
+for(var i = 0; i < data.length; i++) {
+  var deviation = data[i] - mean;
+  total += deviation * deviation;
+}
+var stdDev = Math.sqrt(total / (data.length-1));  // The standard devaition is 2
+
+// Functional way
+// First, define two simple functions
+var sum = function(x,y) { return x+y; };
+var square = function(x) { return x*x; };
+
+// Then use those functions with Array methods to compute mean and stdDev
+var data = [1,1,3,5,5];
+var mean = data.reduce(sum)/data.length;
+var deviations = data.map(function(x) { return x-mean; });
+var stdDev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));
+
+// Call the function f for each element of array and return
+// an array of results. Use Array.prototype.map if it is defined.
+var map = Array.prototype.map
+  ? function(a, f) { return a.map(f); }   // Use map method if it exists
+  : function (a,f) {
+    var results = [];
+    for (var i = 0, len = a.length; i < len; i++) {
+      if (i in a) results[i] = f.call(null, a[i], i, a);
+    }
+    return results;
+  };
+
+// Reduce the array a to a single value using the function f and 
+// optional initial value. Use Array.prototype.reduce if it is defined.
+var reduce = Array.prototype.reduce
+  ? function(a, f, initial) {   // If the reduce() method exists.
+    if (arguments.length > 2)
+      return a.reduce(f, initial);      // If an initial value was passed.
+    else return a.reduce(f);            // Otherwise, no initial value.
+  }
+  : function(a, f, initial) {   // This algorithm from the ES5 specification
+    var i = 0, len = a.length; accumulator;
+
+    // Start with the specified intial value, or the first value in a 
+    if (arguments.length > 2) accumulator = initial;
+    else { // Find the first defined index in the array 
+      if (len ==0) throw TypeError();
+      while (i < len) {
+        if (i in a) {
+          accumulator = a[i++];
+          break;
+        }
+        else i++;
+      }
+      if (i == len) throw TypeError();
+    }
+
+    // Now call f for each remaining element in the array
+    while (i < len) {
+      if (i in a)
+        accumulator = f.call(undefined, accumulator, a[i], i, a);
+      i++;
+    }
+
+    return accumulator;
+};
+
+// Above map and reduce
+var data = [1,1,3,5,5];
+var sum = function(x, y) { return x+y; };
+var square = function(x) { return x*x; };
+var mean = reduce(data, sum)/data.length;
+var deviations = map(data, function(x) { return x - mean; });
+var stdDev = Math.sqrt(reduce(map(deviations, square), sum)/(data.length-1));
+
