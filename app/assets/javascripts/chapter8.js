@@ -540,12 +540,12 @@ function constructFunction() {
 constructFunction()();      // => "global"
 
 // Example 6-4
-function isFunction(x) { 
+function isFunction(x) {
   return Object.prototype.toString.call(x) === "[object Function]";
 }
 
 /* 8.8 Functional Programming
- * 8.8.1 Processing Arrays with Functions 
+ * 8.8.1 Processing Arrays with Functions
  */
 
 // Nonfunctional
@@ -588,7 +588,7 @@ var map = Array.prototype.map
     return results;
   };
 
-// Reduce the array a to a single value using the function f and 
+// Reduce the array a to a single value using the function f and
 // optional initial value. Use Array.prototype.reduce if it is defined.
 var reduce = Array.prototype.reduce
   ? function(a, f, initial) {   // If the reduce() method exists.
@@ -599,9 +599,9 @@ var reduce = Array.prototype.reduce
   : function(a, f, initial) {   // This algorithm from the ES5 specification
     var i = 0, len = a.length; accumulator;
 
-    // Start with the specified intial value, or the first value in a 
+    // Start with the specified intial value, or the first value in a
     if (arguments.length > 2) accumulator = initial;
-    else { // Find the first defined index in the array 
+    else { // Find the first defined index in the array
       if (len ==0) throw TypeError();
       while (i < len) {
         if (i in a) {
@@ -630,4 +630,121 @@ var square = function(x) { return x*x; };
 var mean = reduce(data, sum)/data.length;
 var deviations = map(data, function(x) { return x - mean; });
 var stdDev = Math.sqrt(reduce(map(deviations, square), sum)/(data.length-1));
+
+// This higher-order fucntion returns a new function that passes its
+// arguments to f and returns the logical negation of f's return value;
+function not(f) {
+  return function() {                       // Return a new function
+    var result = f.apply(this, arguments);  // that calls f
+    return !result;                         // and negates its result
+  };
+}
+
+var even = function(x) { // A function to determine if a number is even
+  return x % 2 == 0;
+};
+
+var odd = not(even);    // A new function that does the opposite of even
+[1,1,3,5,5].every(odd); // => true: every element of the array is odd
+
+// Return a function that expects an array argument and applies f to
+// each element, returning the array of return values.
+// Contrast this with the map() function from earlier.
+function mapper(f) {
+  return function(a) { return map(a, f); };
+}
+
+var increment = function(x) { return x + 1; };
+var incrementer = mapper(increment);
+
+incrementer([1,2,3]); // => [2,3,4]
+
+// Return a new function that computes f(g(...)).
+// The returned function h passes all of its arguments to g, and then passes
+// the return value of g to f, and then returns the return value of f.
+// Both f and g are invoked with the same this value as h was invoked with.
+function compose(f,g) {
+  return function() {
+    // We use call for f because we're passing a single value and
+    // apply for g because we're passing an array of values.
+    return f.call(this, g.apply(this, arguments));
+  };
+}
+
+var square = function(x) { return x*x; };
+var sum = function(x,y) { return x+y; }
+var squareOfSum = compose(square, sum);
+squareOfSum(2,3);                                 // => 25
+
+/* 8.8.3 Partial Application of Functions */
+
+// A utility function to convert an array-like object (or suffix of it)
+// to a true array. Used below to convert arguments objects to real arrays.
+function array(a, n) { return Array.prototype.slice.call(a, n || 0); }
+
+// The arguments to this function are passed on the left
+function partialLeft(f /*, ...*/) {
+  var args = arguments;   // Save the outer arguments array
+  return function() {     // And return this function
+    var a = array(args, 1);             // Start with the outer args from 1 on.
+    a = a.concat(array(arguments));     // Then add all the inner arguments.
+    return f.apply(this, a);            // Then invoke f on that argument list.
+  };
+}
+
+function partialRight(f /*, ...*/) {
+  var args = arguments;   // Save the outer arguments array
+  return function() {     // And return this function
+    var a = array(arguments);     // Start with the inner arguments
+    a = a.concat(array(args,1));  // Then add the outer args from 1 on.
+    return f.apply(this, a);
+  };
+}
+
+// The arguments to this function serve as a template. Undefined values
+// in the argument list are filled in with values from the inner set.
+function partial(f /*, ...*/) {
+  var args = arguments;   // Save the outer arguments array
+  return function() {
+    var a = array(args, 1);       // Start with an array of outer args
+    var i=0, j=0;
+    // Loop through those args, filling in undefined values from inner
+    for(; i < a.length; i++)
+      if (a[i] === undefined) a[i] = arguments[j++];
+    // Now append any remaining inner arguments
+    a = a.concat(array(arguments, j));
+    return f.apply(this, a);
+  };
+}
+
+// Here is a function with three arguments
+var f = function(x,y,z) { return x * (y - z); };
+// Notice how these three partial applications differ
+partialLeft(f, 2)(3,4);         // => -2: Bind first argument: 2 * (3 -4)
+partialRight(f, 2)(3,4);        // =>  6: Bind last argument: 3 * (4 - 2)
+partial(f, undefined, 2)(3,4);   // => -6: Bind middle argument: 3 * (2 - 4)
+
+var increment = partialLeft(sum, 1);
+var cuberoot = partialRight(Math.pow, 1/3);
+String.prototype.first = partial(String.prototype.charAt, 0);
+String.prototype.last = partial(String.prototype.substr, -1, 1);
+
+var data = [1,1,3,5,5];             // Our data
+var sum = function(x,y) { return x+y; };      // Two elementary functions
+var product = function(x,y) { return x*y; };  
+var neg = partial(product, -1);               // Define some others
+var square = partial(Math.pow, undefined, 2);
+var sqrt = partial(Math.pow, undefined, .5);
+var reciprocal = partial(Math.pow, undefined, -1);
+
+// Now compute the mean and standard deviation. This is all function
+// invocations with no opreators, and it starts to look like Lisp code!
+var mean = product(reduce(data,sum), reciprocal(data.length));
+var stdDev = sqrt(product(reduce(map(data,
+                                     compose(square,
+                                             partial(sum, neg(mean)))),
+                                 sum),
+                          reciprocal(sum(data.length, -1))));
+
+/* 8.8.4 Memoization */
 
