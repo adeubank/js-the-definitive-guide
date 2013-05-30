@@ -748,3 +748,34 @@ var stdDev = sqrt(product(reduce(map(data,
 
 /* 8.8.4 Memoization */
 
+// Return a memoized version of f.
+// It only works if arguments to f all have distinct string representations.
+function memoize(f) {
+  var cache = {};   // Value cache stored in the closure.
+
+  return function() {
+    // Create a string version of the arguments to use as a cache key.
+    var key = arguments.length + Array.prototype.join.call(arguments,",");
+    if (key in cache) return cache[key];
+    else return cache[key] = f.apply(this, arguments);
+  };
+}
+
+// Return the Greatest Common Divisor of two integers, using the Euclidean
+// algorithm: http://en.wikipedia.org/wiki/Euclidean_algorithm
+function gcd(a,b) {   // Type checking for a and b has been omitted
+  var t;                              // Temporary variable for swapping values
+  if (a < b) t=b, b=a, a=t;           // Ensure that a >= b
+  while(b != 0) t=b, b= a%b, a=t;     // This is Euclid's algorithm for GCD
+  return a;
+}
+
+var gcdMemo = memoize(gcd);
+gcdMemo(85, 187);     // => 17
+
+// Note that when we write a recursive function that we will be memoizing,
+// we typically want to recurse to the memoized version, not the original.
+var factorial = memoize(function(n) {
+                          return (n <= 1) ? 1 : n * factorial(n-1);
+                        });
+factorial(5);     // => 120. Also caches values for 4, 3, 2 and 1.
